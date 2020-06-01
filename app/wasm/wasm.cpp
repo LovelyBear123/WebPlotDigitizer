@@ -1,6 +1,7 @@
 #include "helpers.h"
 #include <Eigen/Core>
 #include <emscripten.h>
+#include <emscripten/bind.h>
 #include <iostream>
 
 extern "C" {
@@ -35,8 +36,33 @@ EMSCRIPTEN_KEEPALIVE
 void printVersion() { std::cout << "WebPlotDigitizer WebAssembly Version 4.2" << std::endl; }
 }
 
+class Foo {
+public:
+    Foo() {}
+
+    void bar() {
+        std::cout << "hello" << std::endl;
+    }
+
+    void printNums(const std::vector<int>& nums) {
+        for (const auto& v: nums) {
+            std::cout << v << ",";
+        }
+        std::cout << std::endl;
+    }
+};
+
+using namespace emscripten;
+EMSCRIPTEN_BINDINGS(c) {
+    register_vector<int>("VectorInt");
+    class_<Foo>("Foo")
+        .constructor()
+        .function("bar", &Foo::bar)
+        .function("printNums", &Foo::printNums);
+}
+
 int main() {
     std::cout << "WebPlotDigitizer WebAssembly Module Loaded" << std::endl;
-    EM_ASM(onWASMLoad());
+    //EM_ASM(onWASMLoad());
     return 0;
 }

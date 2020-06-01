@@ -55,6 +55,15 @@ wpd.CustomIndependents = class {
         };
     }
 
+    getParamList(axes) {
+        return {
+            xvals: ["X vals", "Units", this._xvals],
+            ymin: ["Y min", "Units", this._ymin],
+            ymax: ["Y max", "Units", this._ymax],
+            smoothing: ["Smoothing", "Units", this._smoothing]
+        };
+    }
+
     serialize() {
         return this._wasRun ? {
             algoType: "CustomIndependents",
@@ -65,12 +74,42 @@ wpd.CustomIndependents = class {
         } : null;
     }
 
+    // convert string input from user to sorted array
+    parseVals(vals) {
+        // e.g. convert "[1.2, 3.4, 100]" to an array [1.2, 3.4, 100]
+        let valArray = vals.replace("[","").replace("]","").split(",").map(v => parseFloat(v)).filter(v => !isNaN(v));        
+        valArray.sort();
+        return valArray;
+    }
+
     run(autoDetector, dataSeries, axes) {
         this._wasRun = true;
         dataSeries.clearAll();
+
+        // is log-scale?
         let isLogX = axes.isLogX();
         let isLogY = axes.isLogY();
 
-        // TODO: Finish implementation
+        // dates?
+
+        // TODO: log scale, dates
+        
+          // just use the spline to get values at the parsed values
+        let parsedVals = this.parseVals(this._xvals);
+        if (parsedVals == null || parsedVals.length == 0) {
+            return;
+        }
+        
+        // visit every pixel along x, scan along y to get data point pixel
+
+        // fit a spline
+
+        // get value for parsed values
+
+        let yvals = (new Array(parsedVals.length)).fill(NaN);
+        for (let valIdx = 0; valIdx < parsedVals.length; valIdx++) {
+            // search between ymin and ymax for a data point?
+            // if not found then return NaN
+        }
     }
 };
